@@ -1,0 +1,25 @@
+name: Migrate Notebooks
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+jobs:
+  deploy_to_staging:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install Databricks CLI
+        run: |
+          pip install --user --upgrade databricks-cli
+      - name: Migrate Notebooks to Staging
+        env:
+          DATABRICKS_HOST: https://adb-2406337821898810.10.azuredatabricks.net
+          DATABRICKS_TOKEN: dapide78f167b59852186c2715a5221e29ed
+        run: |
+          DBFSFILEPATH="/Users/deepanker.panchal@celebaltech.com/notebooks1"
+          LOCALFILEPATH="notebooks/"
+          set -e
+          databricks workspace import_dir "$LOCALFILEPATH" "$DBFSFILEPATH" --overwrite
